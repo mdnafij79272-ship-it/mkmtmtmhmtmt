@@ -19,7 +19,7 @@
         .auth-screen { padding: 40px 20px; text-align: center; }
         .logo { font-size: 28px; font-weight: bold; color: #d93025; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
-        input { width: 100%; padding: 12px; border: 1px solid #dadce0; border-radius: 8px; outline: none; margin-bottom: 10px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #dadce0; border-radius: 8px; outline: none; margin-bottom: 10px; }
         .btn { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .hidden { display: none !important; }
 
@@ -31,7 +31,9 @@
         .card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #1a73e8; position: relative; }
         
         /* Notice Style */
-        .rate-notice { background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-weight: bold; border: 1px solid #ffeeba; }
+        .rate-notice { background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 13px; font-weight: bold; border: 1px solid #ffeeba; line-height: 1.4; }
+
+        .refer-card { background: #e8f0fe; padding: 10px; border-radius: 8px; text-align: center; margin-top: 20px; border: 1px dashed #1a73e8; }
 
         /* Earn Section Options */
         .earn-options { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -87,6 +89,7 @@
             <input type="text" id="reg-name" placeholder="Full Name">
             <input type="email" id="reg-email" placeholder="Email">
             <input type="password" id="reg-pass" placeholder="Password">
+            <input type="text" id="reg-refer" placeholder="Refer Code (Optional)">
             <button class="btn" onclick="registerUser()">Register</button>
             <p style="margin-top:15px" onclick="toggleAuth()">Back to Login</p>
         </div>
@@ -104,15 +107,20 @@
 
         <!-- Earn Section -->
         <div id="earn-section" class="content-section">
-            <div class="rate-notice">🔥 Per Gmail: 10 TK (After Approve)</div>
+            <div class="rate-notice">
+                ⚠️ If you enter the wrong number password, it will be rejected. Any verification request will be rejected. <br>
+                <span style="color: #d93025;">🔥 Per Gmail: 10 TK (After Approve)</span>
+            </div>
+
             <h3>Choose Platform</h3>
             <div class="earn-options">
-                <div class="opt-btn active" onclick="switchEarnTab('gmail')">Gmail</div>
+                <div class="opt-btn active" onclick="switchEarnTab('gmail')">Gmail Submit</div>
                 <div class="opt-btn" onclick="switchEarnTab('facebook')">Facebook</div>
             </div>
 
             <!-- Gmail Form -->
             <div id="gmail-form-container">
+                <h4 style="margin-bottom: 10px; color: #1a73e8;">Submit Gmail Accounts</h4>
                 <div id="gmail-inputs-list">
                     <div class="card gmail-input-group">
                         <input type="email" class="g-email" placeholder="Gmail Address">
@@ -129,6 +137,12 @@
                     <h4 style="text-align:center; color:#888;">Facebook tasks are Upcoming...</h4>
                 </div>
             </div>
+
+            <!-- Refer Code Display -->
+            <div class="refer-card">
+                <small>Your Refer Code</small>
+                <div id="my-refer-code" style="font-size: 20px; font-weight: bold; color: #1a73e8;">------</div>
+            </div>
         </div>
 
         <!-- Result Section -->
@@ -143,9 +157,15 @@
         <div id="withdraw-section" class="content-section hidden">
             <h3>Withdraw Funds</h3>
             <div class="card">
-                <p style="margin-bottom: 10px; font-weight: bold; color: #d93025;">Method: bKash</p>
-                <input type="number" id="withdraw-number" placeholder="bKash Personal Number">
+                <label>Select Method:</label>
+                <select id="withdraw-method" onchange="updateWithdrawUI()">
+                    <option value="bkash">bKash (Min 200 TK)</option>
+                    <option value="card">Card (Min 50 BDT)</option>
+                </select>
+                
+                <input type="number" id="withdraw-number" placeholder="bKash Number / Card Details">
                 <input type="number" id="withdraw-amount" placeholder="Amount (TK)">
+                <p id="min-notice" style="font-size: 11px; color: #d93025; margin-bottom: 10px;">Minimum withdrawal: 200 TK</p>
                 <button class="btn" style="background:#e91e63" onclick="submitWithdraw()">Request Withdraw</button>
             </div>
 
@@ -188,19 +208,27 @@
         document.getElementById('register-form').classList.toggle('hidden');
     }
 
+    function generateReferCode() {
+        return Math.floor(100000 + Math.random() * 900000); // 6 digit number
+    }
+
     function registerUser() {
         const name = document.getElementById('reg-name').value;
         const email = document.getElementById('reg-email').value;
         const pass = document.getElementById('reg-pass').value;
+        const refer = document.getElementById('reg-refer').value;
         if(!name || !email || !pass) return alert("Fill all fields");
 
         auth.createUserWithEmailAndPassword(email, pass).then(cred => {
+            const myCode = generateReferCode();
             db.ref('users/' + cred.user.uid).set({
                 fullName: name,
                 balance: 0,
-                email: email
+                email: email,
+                referCode: myCode,
+                referredBy: refer || "none"
             });
-            alert("Account Created!");
+            alert("Account Created! Your Refer Code is: " + myCode);
         }).catch(err => alert(err.message));
     }
 
@@ -230,6 +258,7 @@
                 currentBalance = data.balance || 0;
                 document.getElementById('user-display-name').innerText = data.fullName;
                 document.getElementById('user-balance').innerText = currentBalance + " TK";
+                document.getElementById('my-refer-code').innerText = data.referCode || "N/A";
             }
         });
 
@@ -263,7 +292,7 @@
                         <div class="card" style="border-left-color: #e91e63">
                             <span class="status-badge ${item.status}">${item.status}</span>
                             <b>${item.amount} TK Withdrawal</b><br>
-                            <small>To: ${item.bkashNumber} (bKash)</small><br>
+                            <small>Method: ${item.method} (${item.info})</small><br>
                             <small style="color:#888">${item.date}</small>
                         </div>
                     `;
@@ -285,18 +314,17 @@
         event.currentTarget.classList.add('active');
     }
 
-    function switchEarnTab(tab) {
-        const tabs = document.querySelectorAll('.opt-btn');
-        tabs.forEach(t => t.classList.remove('active'));
+    function updateWithdrawUI() {
+        const method = document.getElementById('withdraw-method').value;
+        const notice = document.getElementById('min-notice');
+        const numInput = document.getElementById('withdraw-number');
         
-        if(tab === 'gmail') {
-            tabs[0].classList.add('active');
-            document.getElementById('gmail-form-container').classList.remove('hidden');
-            document.getElementById('facebook-form-container').classList.add('hidden');
+        if(method === 'bkash') {
+            notice.innerText = "Minimum withdrawal: 200 TK";
+            numInput.placeholder = "bKash Personal Number";
         } else {
-            tabs[1].classList.add('active');
-            document.getElementById('gmail-form-container').classList.add('hidden');
-            document.getElementById('facebook-form-container').classList.remove('hidden');
+            notice.innerText = "Minimum withdrawal: 50 BDT";
+            numInput.placeholder = "Card Number / Details";
         }
     }
 
@@ -316,19 +344,36 @@
         btn.parentElement.remove();
     }
 
-    function submitGmails() {
+    async function submitGmails() {
         const emails = document.getElementsByClassName('g-email');
         const passes = document.getElementsByClassName('g-pass');
         let count = 0;
 
+        // Get all previously submitted emails to check for duplicates globally
+        const snapshot = await db.ref('all_submitted_emails').once('value');
+        const globalEmails = snapshot.val() || {};
+
         for (let i = 0; i < emails.length; i++) {
-            if (emails[i].value && passes[i].value) {
+            let emailVal = emails[i].value.trim().toLowerCase();
+            let passVal = passes[i].value.trim();
+
+            if (emailVal && passVal) {
+                // Check if this email was already submitted in this specific session/database
+                if (Object.values(globalEmails).includes(emailVal)) {
+                    alert("The Gmail " + emailVal + " was already submitted before!");
+                    continue;
+                }
+
+                // Push to user's history
                 db.ref('submissions/' + currentUser.uid).push({
-                    email: emails[i].value,
-                    password: passes[i].value,
+                    email: emailVal,
+                    password: passVal,
                     status: "pending",
                     date: new Date().toLocaleString()
                 });
+
+                // Push to global list to prevent duplicates
+                db.ref('all_submitted_emails').push(emailVal);
                 count++;
             }
         }
@@ -342,24 +387,29 @@
                 </div>
             `;
         } else {
-            alert("Please fill in at least one account.");
+            alert("Please fill in a new, valid account.");
         }
     }
 
     function submitWithdraw() {
-        const number = document.getElementById('withdraw-number').value;
+        const method = document.getElementById('withdraw-method').value;
+        const info = document.getElementById('withdraw-number').value;
         const amount = parseFloat(document.getElementById('withdraw-amount').value);
 
-        if(!number || !amount) {
-            return alert("Please enter both bKash number and amount");
+        if(!info || !amount) {
+            return alert("Please enter both info and amount");
         }
 
         if(amount > currentBalance) {
-            return alert("Insufficient Balance! Your current balance is " + currentBalance + " TK");
+            return alert("Insufficient Balance!");
         }
 
-        if(amount < 100) {
-            return alert("Minimum withdrawal is 100 TK");
+        // Logic for min withdraw
+        if(method === 'bkash' && amount < 200) {
+            return alert("Minimum withdrawal for bKash is 200 TK");
+        }
+        if(method === 'card' && amount < 50) {
+            return alert("Minimum withdrawal for Card is 50 BDT");
         }
 
         const newBalance = currentBalance - amount;
@@ -368,7 +418,8 @@
             balance: newBalance
         }).then(() => {
             db.ref('withdrawals/' + currentUser.uid).push({
-                bkashNumber: number,
+                method: method,
+                info: info,
                 amount: amount,
                 status: "pending",
                 date: new Date().toLocaleString()
@@ -377,6 +428,21 @@
             document.getElementById('withdraw-number').value = "";
             document.getElementById('withdraw-amount').value = "";
         }).catch(err => alert(err.message));
+    }
+
+    function switchEarnTab(tab) {
+        const tabs = document.querySelectorAll('.opt-btn');
+        tabs.forEach(t => t.classList.remove('active'));
+        
+        if(tab === 'gmail') {
+            tabs[0].classList.add('active');
+            document.getElementById('gmail-form-container').classList.remove('hidden');
+            document.getElementById('facebook-form-container').classList.add('hidden');
+        } else {
+            tabs[1].classList.add('active');
+            document.getElementById('gmail-form-container').classList.add('hidden');
+            document.getElementById('facebook-form-container').classList.remove('hidden');
+        }
     }
 </script>
 
