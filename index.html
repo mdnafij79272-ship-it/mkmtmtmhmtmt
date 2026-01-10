@@ -3,183 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gmail Marko - App</title>
+    <title>Gmail Marko - Advanced Pro</title>
     
+    <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f1f3f4; color: #202124; }
-        
-        .app-container { max-width: 480px; margin: 0 auto; background: #fff; min-height: 100vh; position: relative; padding-bottom: 80px; }
-
-        /* Auth Styles */
-        .auth-screen { padding: 40px 20px; text-align: center; }
-        .logo { font-size: 28px; font-weight: bold; color: #d93025; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #dadce0; border-radius: 8px; outline: none; margin-bottom: 10px; }
-        .btn { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .hidden { display: none !important; }
-
-        /* Dashboard Styles */
-        header { background: #1a73e8; color: white; padding: 20px; border-radius: 0 0 20px 20px; }
-        .balance-card { background: white; color: #202124; padding: 20px; border-radius: 12px; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        
-        .content-section { padding: 20px; }
-        .card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #1a73e8; position: relative; }
-        
-        /* Notice Style */
-        .rate-notice { background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 13px; font-weight: bold; border: 1px solid #ffeeba; line-height: 1.4; }
-
-        .refer-card { background: #e8f0fe; padding: 10px; border-radius: 8px; text-align: center; margin-top: 20px; border: 1px dashed #1a73e8; }
-
-        /* Earn Section Options */
-        .earn-options { display: flex; gap: 10px; margin-bottom: 20px; }
-        .opt-btn { flex: 1; padding: 15px; border: 1px solid #ddd; border-radius: 10px; text-align: center; cursor: pointer; background: white; font-weight: bold; }
-        .opt-btn.active { background: #1a73e8; color: white; border-color: #1a73e8; }
-
-        .gmail-input-group { border-bottom: 1px solid #ddd; margin-bottom: 15px; padding-bottom: 10px; }
-        
-        .remove-box-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #ea4335;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        :root {
+            --primary: #1a73e8;
+            --secondary: #34a853;
+            --danger: #d93025;
+            --warning: #f9ab00;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-dark: #202124;
+            --text-light: #5f6368;
         }
 
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #ddd; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-        .nav-item { text-align: center; font-size: 12px; color: #5f6368; cursor: pointer; flex: 1; }
-        .nav-item.active { color: #1a73e8; font-weight: bold; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--bg); color: var(--text-dark); }
+        
+        .app-container { max-width: 480px; margin: 0 auto; background: var(--card-bg); min-height: 100vh; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
 
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; float: right; text-transform: uppercase; font-weight: bold; }
-        .pending { background: #fef7e0; color: #b06000; }
+        /* Auth Styles */
+        .auth-screen { padding: 50px 25px; text-align: center; }
+        .logo { font-size: 32px; font-weight: 800; color: var(--danger); margin-bottom: 30px; letter-spacing: -1px; }
+        input { 
+            width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; outline: none; margin-bottom: 12px; font-size: 15px; transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 5px rgba(26,115,232,0.2); }
+        .btn { 
+            width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; 
+            font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .hidden { display: none !important; }
+
+        /* Header & Dashboard */
+        header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 30px 20px; border-radius: 0 0 25px 25px; }
+        
+        .balance-card { 
+            background: white; color: var(--text-dark); padding: 30px 20px; border-radius: 18px; 
+            margin-top: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); text-align: center;
+        }
+
+        /* Sections */
+        .content-section { padding: 25px 20px 100px 20px; }
+        .section-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
+        /* Table Style */
+        .data-card { background: #fff; border: 1px solid #eee; border-radius: 12px; overflow: hidden; margin-top: 10px; }
+        .input-table { width: 100%; border-collapse: collapse; }
+        .input-table th { background: #f1f3f4; padding: 12px; font-size: 13px; text-align: left; color: var(--text-light); }
+        .input-table td { padding: 10px; border-top: 1px solid #eee; font-size: 14px; }
+        .input-table input { margin-bottom: 0; padding: 8px; border: none; background: #f9f9f9; }
+
+        /* Badges */
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .pending { background: #fff4e5; color: #b06000; }
         .approve { background: #e6f4ea; color: #137333; }
         .reject { background: #fce8e6; color: #c5221f; }
+
+        /* Nav */
+        .bottom-nav { 
+            position: fixed; bottom: 0; width: 100%; max-width: 480px; background: white; 
+            display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #eee; 
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05); z-index: 100;
+        }
+        .nav-item { text-align: center; font-size: 11px; color: #888; cursor: pointer; flex: 1; transition: 0.3s; }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+
+        /* UI Helpers */
+        .refer-box { 
+            background: #e8f0fe; padding: 15px; border-radius: 12px; text-align: center; 
+            margin-top: 20px; border: 1px dashed var(--primary);
+        }
+        .copy-btn { color: var(--primary); cursor: pointer; font-weight: bold; margin-left: 5px; }
     </style>
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
 <div class="app-container">
     
-    <!-- LOGIN/REGISTER SCREEN -->
+    <!-- AUTH SCREEN -->
     <div id="auth-screen" class="auth-screen">
         <div class="logo">Gmail Marko</div>
+        
         <div id="login-form">
-            <h2>Sign in</h2>
-            <input type="email" id="login-email" placeholder="Email">
+            <h2 style="margin-bottom: 20px;">Welcome Back</h2>
+            <input type="email" id="login-email" placeholder="Email Address">
             <input type="password" id="login-pass" placeholder="Password">
-            <button class="btn" onclick="loginUser()">Login</button>
-            <p style="margin-top:15px" onclick="toggleAuth()">New? <span style="color:#1a73e8; cursor:pointer;">Create account</span></p>
+            <button class="btn" onclick="loginUser()">Login Account</button>
+            <p style="margin-top:20px; color: var(--text-light);" onclick="toggleAuth()">New member? <span style="color:var(--primary); font-weight:bold; cursor:pointer;">Create Account</span></p>
         </div>
+
         <div id="register-form" class="hidden">
-            <h2>Register</h2>
-            <input type="text" id="reg-name" placeholder="Full Name">
-            <input type="email" id="reg-email" placeholder="Email">
-            <input type="password" id="reg-pass" placeholder="Password">
+            <h2 style="margin-bottom: 20px;">Register</h2>
+            <input type="text" id="reg-name" placeholder="Your Full Name">
+            <input type="email" id="reg-email" placeholder="Email Address">
+            <input type="password" id="reg-pass" placeholder="Create Password">
             <input type="text" id="reg-refer" placeholder="Refer Code (Optional)">
-            <button class="btn" onclick="registerUser()">Register</button>
-            <p style="margin-top:15px" onclick="toggleAuth()">Back to Login</p>
+            <button class="btn" style="background: var(--secondary);" onclick="registerUser()">Register Now</button>
+            <p style="margin-top:20px; color: var(--text-light);" onclick="toggleAuth()">Already have account? <span style="color:var(--primary); font-weight:bold; cursor:pointer;">Login</span></p>
         </div>
     </div>
 
-    <!-- MAIN APP SCREEN -->
+    <!-- MAIN APP -->
     <div id="main-app" class="hidden">
         <header>
-            <p>Welcome, <span id="user-display-name">User</span>!</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="font-size: 14px; opacity: 0.9;">Hello, <b id="user-display-name">...</b> 👋</p>
+                    <small onclick="copyID()" style="cursor:pointer; opacity: 0.7;">ID: <span id="display-user-id">...</span> <i class="fa-regular fa-copy"></i></small>
+                </div>
+                <button onclick="logout()" style="background:none; border:none; color:white; font-size: 18px;"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+
             <div class="balance-card">
-                <small>Current Balance</small>
-                <h1 id="user-balance">0 TK</h1>
+                <p style="color: var(--text-light); font-size: 13px; font-weight: 600;">AVAILABLE BALANCE</p>
+                <h1 id="user-balance" style="font-size: 36px; color: var(--primary);">0 TK</h1>
             </div>
         </header>
 
         <!-- Earn Section -->
         <div id="earn-section" class="content-section">
-            <div class="rate-notice">
-                ⚠️ If you enter the wrong number password, it will be rejected. Any verification request will be rejected. <br>
-                <span style="color: #d93025;">🔥 Per Gmail: 10 TK (After Approve)</span>
+            <div class="section-title"><i class="fa-solid fa-envelope-open-text" style="color:var(--primary)"></i> Submit Work</div>
+            <p style="font-size: 12px; color: var(--secondary); margin-bottom: 10px; font-weight: bold;">Current Rate: 10 TK per verified Gmail</p>
+            
+            <div class="data-card">
+                <table class="input-table">
+                    <thead>
+                        <tr><th>Gmail Address</th><th>Password</th></tr>
+                    </thead>
+                    <tbody id="input-rows">
+                        <tr><td><input type="text" class="g-email" placeholder="example@gmail.com"></td><td><input type="text" class="g-pass" placeholder="pass123"></td></tr>
+                        <tr><td><input type="text" class="g-email" placeholder="example@gmail.com"></td><td><input type="text" class="g-pass" placeholder="pass123"></td></tr>
+                    </tbody>
+                </table>
             </div>
 
-            <h3>Choose Platform</h3>
-            <div class="earn-options">
-                <div class="opt-btn active" onclick="switchEarnTab('gmail')">Gmail Submit</div>
-                <div class="opt-btn" onclick="switchEarnTab('facebook')">Facebook</div>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn" style="background:#eee; color:#333; flex: 1;" onclick="addMoreRows()">+ Add Row</button>
+                <button class="btn" style="flex: 2;" onclick="submitGmails()">Submit All Accounts</button>
             </div>
-
-            <!-- Gmail Form -->
-            <div id="gmail-form-container">
-                <h4 style="margin-bottom: 10px; color: #1a73e8;">Submit Gmail Accounts</h4>
-                <div id="gmail-inputs-list">
-                    <div class="card gmail-input-group">
-                        <input type="email" class="g-email" placeholder="Gmail Address">
-                        <input type="text" class="g-pass" placeholder="Gmail Password">
-                    </div>
-                </div>
-                <button class="btn" style="background:#34a853" onclick="addGmailBox()">+ Add Box</button>
-                <button class="btn" onclick="submitGmails()">Send to Admin</button>
-            </div>
-
-            <!-- Facebook Form -->
-            <div id="facebook-form-container" class="hidden">
-                <div class="card">
-                    <h4 style="text-align:center; color:#888;">Facebook tasks are Upcoming...</h4>
-                </div>
-            </div>
-
-            <!-- Refer Code Display -->
-            <div class="refer-card">
-                <small>Your Refer Code</small>
-                <div id="my-refer-code" style="font-size: 20px; font-weight: bold; color: #1a73e8;">------</div>
+            
+            <div class="refer-box">
+                <small>Invite friends and earn more!</small><br>
+                <span style="font-size: 16px; font-weight: bold;">Refer Code: <span id="my-refer-code" style="color:var(--primary)">------</span></span>
+                <span class="copy-btn" onclick="copyReferLink()"><i class="fa-regular fa-copy"></i> Copy</span>
             </div>
         </div>
 
-        <!-- Result Section -->
+        <!-- History/Result Section -->
         <div id="result-section" class="content-section hidden">
-            <h3>Submission Status</h3>
-            <div id="history-list">
-                <p style="color:#888; text-align:center;">No submissions yet.</p>
+            <div class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Submission History</div>
+            <div class="data-card">
+                <table class="input-table">
+                    <thead style="background:#f8f9fa;">
+                        <tr><th>Gmail</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <!-- History items -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Transfer Section -->
+        <div id="transfer-section" class="content-section hidden">
+            <div class="section-title"><i class="fa-solid fa-paper-plane"></i> Transfer Money</div>
+            <div style="background:white; padding:20px; border-radius:15px; border:1px solid #eee;">
+                <label style="font-size: 12px; font-weight: bold; color: var(--text-light);">RECIPIENT USER ID</label>
+                <input type="text" id="transfer-id" placeholder="Paste Receiver ID here">
+                
+                <label style="font-size: 12px; font-weight: bold; color: var(--text-light);">AMOUNT (TK)</label>
+                <input type="number" id="transfer-amount" placeholder="Min 10 TK">
+                
+                <button class="btn" style="background:var(--warning)" onclick="handleTransfer()">Instant Transfer</button>
             </div>
         </div>
 
         <!-- Withdraw Section -->
         <div id="withdraw-section" class="content-section hidden">
-            <h3>Withdraw Funds</h3>
-            <div class="card">
-                <label>Select Method:</label>
-                <select id="withdraw-method" onchange="updateWithdrawUI()">
+            <div class="section-title"><i class="fa-solid fa-wallet"></i> Cash Out</div>
+            <div style="background:white; padding:20px; border-radius:15px; border:1px solid #eee;">
+                <label style="font-size: 12px; font-weight: bold;">SELECT METHOD</label>
+                <select id="withdraw-method" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 15px;">
                     <option value="bkash">bKash (Min 200 TK)</option>
-                    <option value="card">Card (Min 50 BDT)</option>
+                    <option value="inim">Inim Card (Min 50 TK)</option>
                 </select>
                 
-                <input type="number" id="withdraw-number" placeholder="bKash Number / Card Details">
-                <input type="number" id="withdraw-amount" placeholder="Amount (TK)">
-                <p id="min-notice" style="font-size: 11px; color: #d93025; margin-bottom: 10px;">Minimum withdrawal: 200 TK</p>
-                <button class="btn" style="background:#e91e63" onclick="submitWithdraw()">Request Withdraw</button>
-            </div>
-
-            <h4>Withdrawal History</h4>
-            <div id="withdraw-list" style="margin-top:10px;">
-                <p style="color:#888; text-align:center;">No history yet.</p>
+                <label style="font-size: 12px; font-weight: bold;">ACCOUNT NUMBER</label>
+                <input type="text" id="withdraw-number" placeholder="017XXXXXXXX / Wallet ID">
+                
+                <label style="font-size: 12px; font-weight: bold;">AMOUNT (TK)</label>
+                <input type="number" id="withdraw-amount" placeholder="0.00">
+                
+                <button class="btn" style="background:var(--danger)" onclick="submitWithdraw()">Confirm Withdraw</button>
             </div>
         </div>
 
         <!-- Bottom Nav -->
         <nav class="bottom-nav">
-            <div class="nav-item active" onclick="showSection('earn')">💰<br>Earn</div>
-            <div class="nav-item" onclick="showSection('result')">📊<br>Result</div>
-            <div class="nav-item" onclick="showSection('withdraw')">💸<br>Withdraw</div>
+            <div class="nav-item active" onclick="showSection('earn', this)"><i class="fa-solid fa-house"></i>Earn</div>
+            <div class="nav-item" onclick="showSection('transfer', this)"><i class="fa-solid fa-share-nodes"></i>Send</div>
+            <div class="nav-item" onclick="showSection('result', this)"><i class="fa-solid fa-list-check"></i>History</div>
+            <div class="nav-item" onclick="showSection('withdraw', this)"><i class="fa-solid fa-hand-holding-dollar"></i>Cashout</div>
         </nav>
     </div>
 </div>
@@ -195,6 +229,7 @@
         messagingSenderId: "515854427192",
         appId: "1:515854427192:web:711e535ffc44d05746f2cd"
     };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
@@ -202,33 +237,34 @@
     let currentUser = null;
     let currentBalance = 0;
 
-    // --- AUTH LOGIC ---
+    // --- UI Logic ---
     function toggleAuth() {
         document.getElementById('login-form').classList.toggle('hidden');
         document.getElementById('register-form').classList.toggle('hidden');
     }
 
-    function generateReferCode() {
-        return Math.floor(100000 + Math.random() * 900000); // 6 digit number
+    function showSection(id, element) {
+        ['earn', 'result', 'withdraw', 'transfer'].forEach(s => document.getElementById(s + '-section').classList.add('hidden'));
+        document.getElementById(id + '-section').classList.remove('hidden');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        element.classList.add('active');
     }
 
+    // --- Auth Actions ---
     function registerUser() {
         const name = document.getElementById('reg-name').value;
         const email = document.getElementById('reg-email').value;
         const pass = document.getElementById('reg-pass').value;
         const refer = document.getElementById('reg-refer').value;
-        if(!name || !email || !pass) return alert("Fill all fields");
+        
+        if(!name || !email || pass.length < 6) return alert("Fill all fields (Pass: min 6 chars)");
 
         auth.createUserWithEmailAndPassword(email, pass).then(cred => {
-            const myCode = generateReferCode();
+            const myCode = Math.floor(100000 + Math.random() * 900000);
             db.ref('users/' + cred.user.uid).set({
-                fullName: name,
-                balance: 0,
-                email: email,
-                referCode: myCode,
-                referredBy: refer || "none"
+                fullName: name, balance: 0, totalEarned: 0, email: email, referCode: myCode, referredBy: refer || "none", uid: cred.user.uid, joined: new Date().toLocaleDateString()
             });
-            alert("Account Created! Your Refer Code is: " + myCode);
+            alert("Success! Welcome to Gmail Marko.");
         }).catch(err => alert(err.message));
     }
 
@@ -236,6 +272,10 @@
         const email = document.getElementById('login-email').value;
         const pass = document.getElementById('login-pass').value;
         auth.signInWithEmailAndPassword(email, pass).catch(err => alert(err.message));
+    }
+
+    function logout() {
+        if(confirm("Logout from app?")) auth.signOut();
     }
 
     auth.onAuthStateChanged(user => {
@@ -250,10 +290,12 @@
         }
     });
 
-    // --- APP LOGIC ---
+    // --- Data Management ---
     function loadUserData(uid) {
-        db.ref('users/' + uid).on('value', snapshot => {
-            const data = snapshot.val();
+        document.getElementById('display-user-id').innerText = uid;
+
+        db.ref('users/' + uid).on('value', snap => {
+            const data = snap.val();
             if(data){
                 currentBalance = data.balance || 0;
                 document.getElementById('user-display-name').innerText = data.fullName;
@@ -262,132 +304,76 @@
             }
         });
 
-        db.ref('submissions/' + uid).on('value', snapshot => {
-            const list = document.getElementById('history-list');
-            list.innerHTML = "";
-            if(snapshot.exists()) {
-                snapshot.forEach(child => {
+        // Load History
+        db.ref('submissions/' + uid).on('value', snap => {
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = "";
+            if(snap.exists()) {
+                snap.forEach(child => {
                     const item = child.val();
-                    list.innerHTML += `
-                        <div class="card">
-                            <span class="status-badge ${item.status}">${item.status}</span>
-                            <b>Gmail Submission</b><br>
-                            <small>${item.email}</small><br>
-                            <small style="color:#888">${item.date}</small>
-                        </div>
-                    `;
+                    tbody.insertAdjacentHTML('afterbegin', `
+                        <tr>
+                            <td>${item.email}<br><small style="color:#999">${item.date}</small></td>
+                            <td><span class="badge ${item.status}">${item.status}</span></td>
+                        </tr>
+                    `);
                 });
-            } else {
-                list.innerHTML = "<p style='text-align:center;color:#888'>No submissions yet.</p>";
-            }
-        });
-
-        db.ref('withdrawals/' + uid).on('value', snapshot => {
-            const wList = document.getElementById('withdraw-list');
-            wList.innerHTML = "";
-            if(snapshot.exists()){
-                snapshot.forEach(child => {
-                    const item = child.val();
-                    wList.innerHTML += `
-                        <div class="card" style="border-left-color: #e91e63">
-                            <span class="status-badge ${item.status}">${item.status}</span>
-                            <b>${item.amount} TK Withdrawal</b><br>
-                            <small>Method: ${item.method} (${item.info})</small><br>
-                            <small style="color:#888">${item.date}</small>
-                        </div>
-                    `;
-                });
-            } else {
-                wList.innerHTML = "<p style='text-align:center;color:#888'>No withdrawal history.</p>";
             }
         });
     }
 
-    function showSection(sectionId) {
-        ['earn', 'result', 'withdraw'].forEach(s => {
-            document.getElementById(s + '-section').classList.add('hidden');
-        });
-        document.getElementById(sectionId + '-section').classList.remove('hidden');
-        
-        const navs = document.querySelectorAll('.nav-item');
-        navs.forEach(nav => nav.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-    }
-
-    function updateWithdrawUI() {
-        const method = document.getElementById('withdraw-method').value;
-        const notice = document.getElementById('min-notice');
-        const numInput = document.getElementById('withdraw-number');
-        
-        if(method === 'bkash') {
-            notice.innerText = "Minimum withdrawal: 200 TK";
-            numInput.placeholder = "bKash Personal Number";
-        } else {
-            notice.innerText = "Minimum withdrawal: 50 BDT";
-            numInput.placeholder = "Card Number / Details";
+    // --- App Features ---
+    function addMoreRows() {
+        const tbody = document.getElementById('input-rows');
+        for(let i=0; i<3; i++) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td><input type="text" class="g-email" placeholder="example@gmail.com"></td><td><input type="text" class="g-pass" placeholder="pass123"></td>';
+            tbody.appendChild(tr);
         }
     }
 
-    function addGmailBox() {
-        const container = document.getElementById('gmail-inputs-list');
-        const newBox = document.createElement('div');
-        newBox.className = "card gmail-input-group";
-        newBox.innerHTML = `
-            <button class="remove-box-btn" onclick="removeGmailBox(this)">✕</button>
-            <input type="email" class="g-email" placeholder="Gmail Address">
-            <input type="text" class="g-pass" placeholder="Gmail Password">
-        `;
-        container.appendChild(newBox);
-    }
-
-    function removeGmailBox(btn) {
-        btn.parentElement.remove();
-    }
-
-    async function submitGmails() {
+    function submitGmails() {
         const emails = document.getElementsByClassName('g-email');
         const passes = document.getElementsByClassName('g-pass');
         let count = 0;
 
-        // Get all previously submitted emails to check for duplicates globally
-        const snapshot = await db.ref('all_submitted_emails').once('value');
-        const globalEmails = snapshot.val() || {};
-
         for (let i = 0; i < emails.length; i++) {
-            let emailVal = emails[i].value.trim().toLowerCase();
-            let passVal = passes[i].value.trim();
-
-            if (emailVal && passVal) {
-                // Check if this email was already submitted in this specific session/database
-                if (Object.values(globalEmails).includes(emailVal)) {
-                    alert("The Gmail " + emailVal + " was already submitted before!");
-                    continue;
-                }
-
-                // Push to user's history
+            let e = emails[i].value.trim();
+            let p = passes[i].value.trim();
+            if (e.includes("@") && p.length > 3) {
                 db.ref('submissions/' + currentUser.uid).push({
-                    email: emailVal,
-                    password: passVal,
-                    status: "pending",
-                    date: new Date().toLocaleString()
+                    email: e, password: p, status: "pending", date: new Date().toLocaleString()
                 });
-
-                // Push to global list to prevent duplicates
-                db.ref('all_submitted_emails').push(emailVal);
+                emails[i].value = "";
+                passes[i].value = "";
                 count++;
             }
         }
+        if(count > 0) alert("Submitted " + count + " accounts. Verification takes 24h.");
+        else alert("Invalid entry! Check Gmail & Password.");
+    }
 
-        if (count > 0) {
-            alert("Successfully sent " + count + " accounts to admin! Wait for approval to get 10 TK each.");
-            document.getElementById('gmail-inputs-list').innerHTML = `
-                <div class="card gmail-input-group">
-                    <input type="email" class="g-email" placeholder="Gmail Address">
-                    <input type="text" class="g-pass" placeholder="Gmail Password">
-                </div>
-            `;
+    async function handleTransfer() {
+        const receiverId = document.getElementById('transfer-id').value.trim();
+        const amount = parseFloat(document.getElementById('transfer-amount').value);
+
+        if(!receiverId || isNaN(amount) || amount < 10) return alert("Minimum transfer 10 TK");
+        if(receiverId === currentUser.uid) return alert("Cannot send to yourself");
+        if(amount > currentBalance) return alert("Insufficient balance");
+
+        const receiverRef = db.ref('users/' + receiverId);
+        const snapshot = await receiverRef.once('value');
+
+        if(snapshot.exists()) {
+            const receiverData = snapshot.val();
+            await receiverRef.update({ balance: (receiverData.balance || 0) + amount });
+            await db.ref('users/' + currentUser.uid).update({ balance: currentBalance - amount });
+            db.ref('transfers').push({ from: currentUser.uid, to: receiverId, amount: amount, date: new Date().toLocaleString() });
+            alert(`Transfer Successful to ${receiverData.fullName}`);
+            document.getElementById('transfer-id').value = "";
+            document.getElementById('transfer-amount').value = "";
         } else {
-            alert("Please fill in a new, valid account.");
+            alert("Receiver ID Not Found!");
         }
     }
 
@@ -395,54 +381,32 @@
         const method = document.getElementById('withdraw-method').value;
         const info = document.getElementById('withdraw-number').value;
         const amount = parseFloat(document.getElementById('withdraw-amount').value);
+        let min = (method === 'inim') ? 50 : 200;
 
-        if(!info || !amount) {
-            return alert("Please enter both info and amount");
-        }
+        if(!info || isNaN(amount) || amount < min) return alert("Min withdraw for " + method + " is " + min + " TK");
+        if(amount > currentBalance) return alert("Insufficient balance");
 
-        if(amount > currentBalance) {
-            return alert("Insufficient Balance!");
-        }
-
-        // Logic for min withdraw
-        if(method === 'bkash' && amount < 200) {
-            return alert("Minimum withdrawal for bKash is 200 TK");
-        }
-        if(method === 'card' && amount < 50) {
-            return alert("Minimum withdrawal for Card is 50 BDT");
-        }
-
-        const newBalance = currentBalance - amount;
-        
-        db.ref('users/' + currentUser.uid).update({
-            balance: newBalance
-        }).then(() => {
-            db.ref('withdrawals/' + currentUser.uid).push({
-                method: method,
-                info: info,
-                amount: amount,
-                status: "pending",
-                date: new Date().toLocaleString()
+        db.ref('users/' + currentUser.uid).update({ balance: currentBalance - amount }).then(() => {
+            db.ref('withdrawals').push({
+                uid: currentUser.uid, method, info, amount, status: "pending", date: new Date().toLocaleString()
             });
-            alert("Withdrawal request sent successfully!");
+            alert("Withdraw request sent! Payment within 12 hours.");
             document.getElementById('withdraw-number').value = "";
             document.getElementById('withdraw-amount').value = "";
-        }).catch(err => alert(err.message));
+        });
     }
 
-    function switchEarnTab(tab) {
-        const tabs = document.querySelectorAll('.opt-btn');
-        tabs.forEach(t => t.classList.remove('active'));
-        
-        if(tab === 'gmail') {
-            tabs[0].classList.add('active');
-            document.getElementById('gmail-form-container').classList.remove('hidden');
-            document.getElementById('facebook-form-container').classList.add('hidden');
-        } else {
-            tabs[1].classList.add('active');
-            document.getElementById('gmail-form-container').classList.add('hidden');
-            document.getElementById('facebook-form-container').classList.remove('hidden');
-        }
+    // Utilities
+    function copyID() {
+        const id = document.getElementById('display-user-id').innerText;
+        navigator.clipboard.writeText(id);
+        alert("Your User ID Copied!");
+    }
+
+    function copyReferLink() {
+        const code = document.getElementById('my-refer-code').innerText;
+        navigator.clipboard.writeText(code);
+        alert("Refer Code Copied!");
     }
 </script>
 
